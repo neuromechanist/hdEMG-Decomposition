@@ -20,7 +20,7 @@ function motor_unit = run_decomposition(varargin)
 %   lcation of the data file, the data file must be a MAT array.
 %   Default is the sample file included in the toolbox.
 %
-%   'recording_mode' : EMG can be recorded in the 'monopolar' or 'bipolar'
+%   'data_mode' : EMG can be recorded in the 'monopolar' or 'bipolar'
 %   mode. Default = 'monopolar'
 %
 %   'frq','sampling_frequency' : Sampling frequency of the data, default = 2048 Hz
@@ -63,14 +63,14 @@ function motor_unit = run_decomposition(varargin)
 %   v0 @ 09/12/2022
 %
 %
-%   Copyright 2022 Seyed Yahya Shirazi, shirazi@ieee.org
+%   Copyright (c) 2022 Seyed Yahya Shirazi, shirazi@ieee.org
 
 %% initialize
 fs = filesep;  % a shortcut to the filesep 
 addpath('./helper_functions')
 opts = arg_define(varargin, ...
         arg({'data'},[fs 'sample_data' fs 'sample.mat'] ,[],'The file is also from the Hyser dataset'), ...
-        arg({'recording_mode'}, 'monopolar',['monopolar','bipolar'],'Recroding mode of the hd-EMG data'), ...
+        arg({'data_mode'}, 'monopolar',['monopolar','bipolar'],'Data mode of the hd-EMG data'), ...
         arg({'frq','sampling_frequency'}, 2048,[],'Sampling frequency of the imported dataset'), ...
         arg({'R', 'extension_parameter'}, 4,[],'The number of times to repeat the data blocks'), ...
         arg({'M', 'max_iter'}, 300,[],'Maximum iterations for the (FAST) ICA decompsition.'), ...
