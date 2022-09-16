@@ -64,6 +64,12 @@ extended_data = zeros(size(data,1),size(data,2)*(R+1));
 extended_data(:,1:size(data,2)) = data; % to make a consistent downstream
 if R~=0
     for i = 1:R
+        % This basically shift the data on the replications one step
+        % forward. This is pretty standard in the ICA, as ICA should be
+        % able to parse the sources out pretty well. Also, it introduces
+        % small delay, R/freq, which with R=64, delay = 64/2048= 31ms.
+        % This addition reinforces finding MUAPs, despite having
+        % duplicates. Later on, the duplicates will be removed.
         extended_data(1+i:end,size(data,2)*i+1:size(data,2)*i+size(data,2)) = ...
             data(1:end-i,:);
     end
