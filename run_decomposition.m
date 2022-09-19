@@ -85,5 +85,5 @@ max_iter = 200;
 
 %% run the decomposition
 [extended_emg,W] = SimEMGProcessing(data,'R',opts.R,'WhitenFlag',opts.whiten_flag,'SNR',opts.SNR);
-[s,B,uncleaned_spkieTrain] = runICA(extended_emg, opts.M, max_iter);
-
+[uncleaned_source,B,uncleaned_spkieTrain] = runICA(extended_emg, opts.M, max_iter); % B is the unmixing matrix
+[spike_train, source, good_idx] = remove_motorUnit_duplicates(uncleaned_spkieTrain, uncleaned_source, opts.frq);

@@ -78,5 +78,3 @@ whMat = sqrt(size(X,1)-1)*V*sqrtm(inv(D + eye(size(D))*epsilon))*V';
 Xwh = X*whMat;  
 invMat = pinv(whMat);
 
-end
-
