@@ -46,7 +46,7 @@ for i = 1:2:length(varargin)
 end
 % data can come in coloumn or row format, but needs to become the coloumn
 % format where the 
-num_chan = max(size(data));
+num_chan = min(size(data));  % Let's assume that we have more than 64 frames
 if num_chan ~= size(data,2), data = data'; end
 
 %% preprocessing
@@ -81,6 +81,7 @@ if whiten_flag
 else
     preprocessed_data = data;
 end
+disp("EMG preprocessing is completed")
 
 
 

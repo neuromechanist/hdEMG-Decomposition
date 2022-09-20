@@ -1,4 +1,4 @@
-function [spike_train,good_idx] = remove_motorUnit_duplicates(spike_train, source, freq)
+function [spike_train,source, good_idx] = remove_motorUnit_duplicates(spike_train, source, freq)
 %REMOVE_MOTORUNIT_DUPLICATES removes the duplicate sources based identifed
 %by the ICA algoritm.
 %
@@ -14,6 +14,8 @@ function [spike_train,good_idx] = remove_motorUnit_duplicates(spike_train, sourc
 %   OUTPUTS:
 %   'spike_train' : This time the duplicates are removed.
 %
+%   'source' : The duplicates are removed from the source as well.
+%
 %   'good_idx':  The source indecies that are good, ie, pass this test
 %
 %   REV:
@@ -27,8 +29,8 @@ if ~exist("freq","var") || isempty(freq), freq = 2048; end % default value for t
 % refrence look at Winter's biomechanics book chapter 9 and 10.
 min_firing = 4; % in Hz
 max_firing = 35; % in Hz
-min_firing_interval = 20; % in miliseconds. This equals to max_firning = 50Hz
-time_stamp = linspace(1/freq:length(spike_train)/freq,length(spike_train));
+min_firing_interval = 0.020; % in miliseconds. This equals to max_firning = 50Hz
+time_stamp = linspace(1/freq,length(spike_train)/freq,length(spike_train));
 
 %% step 1, select physiologically plausible sources
 firings = sum(spike_train,1);
@@ -42,9 +44,9 @@ plausible_firings = intersect(upperBound_cond,lowerBound_cond); % these are the 
 % spike rates are not physiological, therefore, only one can exist. We only
 % take the one with greater peak
 for k = plausible_firings
-    spike_timeDiff = diff(time_stamps(spike_train(:,k)));
-    for t = spike_timeDiff
-        if t < min_firing_interval
+    spike_timeDiff = diff(time_stamp(spike_train(:,k)==1));
+    for t = 1:length(spike_timeDiff)
+        if spike_timeDiff(t) < min_firing_interval
             if source(t,k) < source(t+1,k)
                 spike_train(t,k) = 0;
             else
@@ -62,8 +64,8 @@ num_bins = 10; % number of bins for the histogram
 duplicate_sources = [];
 for k = plausible_firings
     if ~ismember(k,duplicate_sources)
-        for j = setdiff(duplicate_sources,plausible_firings(plausible_firings~=k))
-            isduplicate  = CSIndex(time_stamp(spike_train(:,k)),time_stamp(spike_train(:,j)),...
+        for j = setdiff(plausible_firings(plausible_firings~=k),duplicate_sources)
+            isduplicate  = CSIndex(time_stamp(spike_train(:,k)==1),time_stamp(spike_train(:,j)==1),...
                 max_timeDiff, num_bins);
             if isduplicate
                 duplicate_sources = [duplicate_sources j]; %#ok<AGROW> 
@@ -72,6 +74,8 @@ for k = plausible_firings
     end
 end
 good_idx = setdiff(plausible_firings,duplicate_sources);
-spike_train = spike_train(:,good_idx);
+spike_train = sparse(spike_train(:,good_idx));
+source = source(:,good_idx);
+
 
 

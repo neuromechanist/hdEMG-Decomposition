@@ -69,21 +69,45 @@ function motor_unit = run_decomposition(varargin)
 fs = filesep;  % a shortcut to the filesep 
 addpath('./helper_functions')
 opts = arg_define(varargin, ...
-        arg({'data'},[fs 'sample_data' fs 'sample.mat'] ,[],'The file is also from the Hyser dataset'), ...
+        arg({'data'},['sample_data' fs 'sample1'] ,[],'The file is also from the Hyser dataset'), ...
         arg({'data_mode'}, 'monopolar',['monopolar','bipolar'],'Data mode of the hd-EMG data'), ...
         arg({'frq','sampling_frequency'}, 2048,[],'Sampling frequency of the imported dataset'), ...
         arg({'R', 'extension_parameter'}, 4,[],'The number of times to repeat the data blocks'), ...
-        arg({'M', 'max sources'}, 300,[],'Maximum number of sources being decomposed by (FAST) ICA.'), ...
+        arg({'M', 'max_sources'}, 300,[],'Maximum number of sources being decomposed by (FAST) ICA.'), ...
         arg({'whiten_flag'}, 1,[0,1],'Whether to whiten the data prior to the ICA.'), ...
         arg({'SNR', 'inject_noise'}, Inf,[],'WAdding white noise to the EMG mixutre.'), ...
         arg({'SIL_thresh'}, 0.6,[],'The silhouette threshold to detect the good motor units.'), ...
-        arg({'save_path'},[fs 'sample_data' fs] ,[],'The path that the files should be saved there.'), ...
-        arg({'save_flag'}, 0,[0,1],'Whether the files are saved or not.'));
+        arg({'output_file'},['sample_data' fs 'sample1_decomposed'] ,[],'The path to the output file.'), ...
+        arg({'save_flag'}, 1,[0,1],'Whether the files are saved or not.'),...
+        arg({'plot_spikeTrain', 'plot_fig'}, 0,[0,1],'Whether to plot the resulting spike trains.'),...
+        arg({'load_ICA'}, 0,[0,1],'Whether to load precomputed ICA results for debugging.'));
 data = opts.data;
-if ischar(data), data = load(data); end
+if ischar(data)
+    emg_file = load(data); % Based on the strcutre of the exproted MAT files from OTBiolab+ v1.5.8
+    data = emg_file.Data{1}; % Assuming that the file ONLY contains one hdEMG array!
+    opts.frq = emg_file.SamplingFrequency;
+end
 max_iter = 200;
 
 %% run the decomposition
-[extended_emg,W] = SimEMGProcessing(data,'R',opts.R,'WhitenFlag',opts.whiten_flag,'SNR',opts.SNR);
-[uncleaned_source,B,uncleaned_spkieTrain] = runICA(extended_emg, opts.M, max_iter); % B is the unmixing matrix
+[extended_emg,~] = emg_preprocess(data,'R',opts.R,'WhitenFlag',opts.whiten_flag,'SNR',opts.SNR);
+if ~opts.load_ICA
+    [uncleaned_source,B,uncleaned_spkieTrain,score] = run_ICA(extended_emg, opts.M, max_iter); % B is the unmixing matrix
+else
+    warning("Loading ICA results from a saved file. Change the 'load_ICA' flag if you want to run ICA.")
+    ica_results = load([opts.data '_ica_results']);
+    uncleaned_source = ica_results.uncleaned_source; uncleaned_spkieTrain = ica_results.uncleaned_spkieTrain;
+    score = ica_results.score; B = ica_results.B;
+end
 [spike_train, source, good_idx] = remove_motorUnit_duplicates(uncleaned_spkieTrain, uncleaned_source, opts.frq);
+silhouette_score = score(good_idx);
+
+%% save the results
+% motor_unit.raw.B = B; motor_unit.raw.extended_emg = extended_emg;  % this creates a very large file thay would not fit on github.   
+% motor_unit.raw.uncleaned_source = uncleaned_source; motor_unit.raw.score = score;
+motor_unit.spike_train = spike_train; motor_unit.source = source; motor_unit.good_idx = good_idx;
+motor_unit.silhouette_score = silhouette_score;
+if opts.save_flag, save(opts.output_file,"-struct","motor_unit"); end
+
+%% plot the motor units in a nice way
+if opts.plot_spikeTrain, plot_spikeTrain(spike_train, opts.frq); end
