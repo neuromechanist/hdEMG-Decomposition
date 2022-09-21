@@ -82,7 +82,3 @@ else
     preprocessed_data = data;
 end
 disp("EMG preprocessing is completed")
-
-
-
-
