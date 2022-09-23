@@ -1,3 +1,5 @@
+[![DOI](https://zenodo.org/badge/535755204.svg)](https://zenodo.org/badge/latestdoi/535755204)
+
 # hdEMG Decomposition pipeline
 
 Do you ever wonder why EMG signals look so random?
