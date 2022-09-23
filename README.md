@@ -26,7 +26,7 @@ I only found the pipeline of one of the methods shared online. The CKC method an
 
 ## So, if there is one pipeline available, what is this code?
 
-Good question! This pipeline (in its current form) is ~**not**~ a new method; it is rather a refined implementation of the open-source code. Upon reviewing the code, I found the open-source fast ICA is mostly customized toward the Hyper d
+Good question! This pipeline (in its current form) is **not** a new method; it is rather a refined implementation of the open-source code. Upon reviewing the code, I found the open-source fast ICA is mostly customized toward the Hyser dataset and lacks documentation needed to make improvements easily. So, I mostly tried to transform the code to a more efficient and transparent pipeline for everyone.
 
 ## What is the next step?
 
