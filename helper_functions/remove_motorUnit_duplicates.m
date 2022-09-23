@@ -29,7 +29,7 @@ if ~exist("freq","var") || isempty(freq), freq = 2048; end % default value for t
 % refrence look at Winter's biomechanics book chapter 9 and 10.
 min_firing = 4; % in Hz
 max_firing = 35; % in Hz
-min_firing_interval = 0.020; % in miliseconds. This equals to max_firning = 50Hz
+min_firing_interval = 1/max_firing; % in miliseconds. This equals to max_firning = 50Hz
 time_stamp = linspace(1/freq,length(spike_train)/freq,length(spike_train));
 
 %% step 1, select physiologically plausible sources
