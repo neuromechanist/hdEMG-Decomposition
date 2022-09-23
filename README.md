@@ -1,4 +1,5 @@
 [![DOI](https://zenodo.org/badge/535755204.svg)](https://zenodo.org/badge/latestdoi/535755204)
+[![View hdEMG-Decomposition on File Exchange](https://www.mathworks.com/matlabcentral/images/matlab-file-exchange.svg)](https://www.mathworks.com/matlabcentral/fileexchange/117970-hdemg-decomposition)
 
 # hdEMG Decomposition pipeline
 
@@ -87,4 +88,4 @@ Also check the IEEE magazine article for the possible uses of the hdEMG ([Holoba
 
 Please use the following to cite this repository:
 
-Shirazi, S.Y. 2022: hdEMG-Decompostion (github.com/neuromechanist/hdEMG-Decomposition/tag/0.1), GitHub.
+Shirazi, S.Y. 2022: hdEMG-Decompostion (github.com/neuromechanist/hdEMG-Decomposition/tag/0.1), GitHub. https://doi.org/10.5281/zenodo.7106379
