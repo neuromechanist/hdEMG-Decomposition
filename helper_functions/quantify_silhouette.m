@@ -1,5 +1,5 @@
 function score = quantify_silhouette(source, freq)
-%quantify_silhouette() Rubs (fast) ICA on the hdEMG data and produces the spike trains.
+%quantify_silhouette() Runs (fast) ICA on the hdEMG data and produces the spike trains.
 %
 %
 %   Similar to the silhouette scoring for all kmeans clustering problems,
