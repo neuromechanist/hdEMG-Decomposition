@@ -24,6 +24,11 @@ function motor_unit = run_decomposition(varargin)
 %   mode. Default = 'monopolar'
 %
 %   'frq','sampling_frequency' : Sampling frequency of the data, default = 2048 Hz
+%
+%   'arr', 'array_shape' : shape of the arry, as a 1 x 2 vevtor. Default =
+%   [8, 8]. Note, setting 'arr', [13, 5] will throw an error; please use [8, 8] instead.
+%   This is because the computing functions are not spatially sensitve. Later on,
+%   and for array plots, the array shape will determine the plot shape
 %   
 %   'R', 'extension_parameter' : The number of times to repeat the data
 %   blocks, see the Hyser paper for more detail. Default = 4
@@ -31,8 +36,7 @@ function motor_unit = run_decomposition(varargin)
 %   'M', 'max_iter' : Maximum iterations for the (FAST) ICA decompsition.
 %   Default = 300
 %
-%   'whiten_flag' : Whether to whiten the data prior to the ICA. Default =
-%   1
+%   'whiten_flag' : Whether to whiten the data prior to the ICA. Default = 1
 %
 %   'SNR', 'inject_noise' : Adding white noise to the EMG mixutre. Uses
 %   Communication Toolbox AWGN fucntion. Default = Inf for not injecting
@@ -72,6 +76,7 @@ opts = arg_define(varargin, ...
         arg({'data'},['sample_data' fs 'sample1'] ,[],'The file is also from the Hyser dataset'), ...
         arg({'data_mode'}, 'monopolar',['monopolar','bipolar'],'Data mode of the hd-EMG data'), ...
         arg({'frq','sampling_frequency'}, 2048,[],'Sampling frequency of the imported dataset'), ...
+        arg({'array_shape','arr'}, [8, 8],[],'Array shape as a 2D vector'), ...
         arg({'R', 'extension_parameter'}, 4,[],'The number of times to repeat the data blocks'), ...
         arg({'M', 'max_sources'}, 300,[],'Maximum number of sources being decomposed by (FAST) ICA.'), ...
         arg({'whiten_flag'}, 1,[0,1],'Whether to whiten the data prior to the ICA.'), ...
@@ -90,7 +95,7 @@ end
 max_iter = 200;
 
 %% run the decomposition
-[extended_emg,~] = emg_preprocess(data,'R',opts.R,'WhitenFlag',opts.whiten_flag,'SNR',opts.SNR);
+[extended_emg,~] = emg_preprocess(data,'R',opts.R,'WhitenFlag',opts.whiten_flag,'SNR',opts.SNR, 'array_shape', opts.array_shape);
 if ~opts.load_ICA
     [uncleaned_source,B,uncleaned_spkieTrain,score] = run_ICA(extended_emg, opts.M, max_iter); % B is the unmixing matrix
 else
