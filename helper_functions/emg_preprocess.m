@@ -42,6 +42,12 @@ for i = 1:2:length(varargin)
             data_mode = varargin{i+1};
         case 'array_shape'
             array_shape = varargin{i+1};
+            if length(array_shape) ~= 2
+                error("array_shape should be strictirly a 1 x 2 vector")
+            elseif mod(array_shape(1) * array_shape(2), 2) == 1
+                error("array_shape elements should be even numbers. Please choose another array shape"+...
+                    "\n if [13, 5] is used, please rerun the script with [8, 8].")
+            end
     end
 end
 % data can come in coloumn or row format, but needs to become the coloumn
