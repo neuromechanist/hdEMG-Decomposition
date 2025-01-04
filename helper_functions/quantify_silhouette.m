@@ -19,4 +19,5 @@ function score = quantify_silhouette(source, freq)
 %   Copyright (c) 2022 Seyed Yahya Shirazi, shirazi@ieee.org
 %% initialize
 [b,a] = butter(4,500/(freq/2),'low'); % low-pass filter for the source signals
+source = filtfilt(b,a,source);
 score = zeros(1,size(source,2)); % Initialize scores (columns = motor units, rows = frames)
