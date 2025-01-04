@@ -1,23 +1,23 @@
 function [source,B,spike_train,score] = run_ICA(emg, M, max_iter)
-%run_ICA() Runs (fast) ICA on the hdEMG data and produces the spike trains.
+%RUN_ICA Runs (fast) ICA on the hdEMG data and produces spike trains.
 %
 %   INPUT:
-%   'emg' : The extended hd-EMG that is the out
+%   'emg' : The extended hd-EMG data matrix
 %
-%   'M' : Number of sources.
+%   'M' : Number of sources to extract
 %
-%   'max_iter': The maximum iterations per source to converge.
+%   'max_iter': Maximum number of iterations per source for convergence
 %
 %   OUTPUT:
 %   'spike_train': The spike train from the identified peaks for each
-%   source (ie, motor units)
+%   source (i.e., motor units)
 %
-%   'B': unmixing matrix
+%   'B': Unmixing matrix
 %
-%   'source': The source signal
+%   'source': The source signal matrix
 %
-%   'score': This is the silhouette score for the effectiveness of the
-%   clusterting performed after the running the ICA to find the peakes.
+%   'score': Silhouette score measuring the effectiveness of the
+%   clustering performed after running ICA to find the peaks
 %
 %   REV:
 %   v0 @ 09/14/2022
@@ -49,7 +49,7 @@ for i = 1:M
             break;
         end
     end
-    source(:,i) = w(:,n)'*emg; % This is the source signals.
+    source(:,i) = w(:,n)'*emg; % Extract the source signal
 
     [pks,loc] = findpeaks(source(:,i).^2);
     [idx,~] = kmeansplus(pks',2);

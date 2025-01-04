@@ -1,32 +1,31 @@
 function [spike_train,source, good_idx] = remove_motorUnit_duplicates(spike_train, source, freq)
-%REMOVE_MOTORUNIT_DUPLICATES removes the duplicate sources based identifed
-%by the ICA algoritm.
-%
+%REMOVE_MOTORUNIT_DUPLICATES Removes duplicate sources identified
+%by the ICA algorithm.
 %
 %   INPUTS:
-%   'spike_train' :  the signal containing the spikes detected by the
-%   runICA() for each motor unit.
+%   'spike_train' : The signal containing the spikes detected by
+%   run_ICA() for each motor unit.
 %
-%   'source' : the source singal, also the output of the runICA() function
+%   'source' : The source signal, also the output of the run_ICA() function.
 %
-%   'freq' :  The EMG recording frequency. Default = 2048
+%   'freq' : The EMG recording frequency. Default = 2048 Hz.
 %
 %   OUTPUTS:
 %   'spike_train' : This time the duplicates are removed.
 %
 %   'source' : The duplicates are removed from the source as well.
 %
-%   'good_idx':  The source indecies that are good, ie, pass this test
+%   'good_idx': The source indices that are good, i.e., pass this test
 %
 %   REV:
 %   v0 @ 09/15/2022
 %
 %   Copyright (c) 2022 Seyed Yahya Shirazi, shirazi@ieee.org
 %% initialize
-if ~exist("freq","var") || isempty(freq), freq = 2048; end % default value for the recoding frequency 
-% The minimum of muscle firing is set to 4 Hz and the max should not be
-% more than 35 Hz. This insight is form the physiological stnadpoint. For
-% refrence look at Winter's biomechanics book chapter 9 and 10.
+if ~exist("freq","var") || isempty(freq), freq = 2048; end % Default value for the recording frequency 
+% The minimum muscle firing rate is set to 4 Hz and the max should not be
+% more than 35 Hz. This insight is from the physiological standpoint. For
+% reference, see Winter's biomechanics book chapters 9 and 10.
 min_firing = 4; % in Hz
 max_firing = 35; % in Hz
 min_firing_interval = 1/max_firing; % in miliseconds. This equals to max_firning = 50Hz
@@ -39,7 +38,7 @@ upperBound_cond = find(firings<max_firing*time_stamp(end));
 plausible_firings = intersect(upperBound_cond,lowerBound_cond); % these are the sources with plausible firings
 
 %% step2, select only one spike from twin spikes
-% It so happens that the spikes in a good source with "playsible firgins"
+% It so happens that the spikes in a good source with "plausible firings"
 % are very close to each other (say < 20ms, i.e., 50Hz spike rate), Such
 % spike rates are not physiological, therefore, only one can exist. We only
 % take the one with greater peak
@@ -57,8 +56,8 @@ for k = plausible_firings
 end
 
 %% step3, finally, the duplicates motor units should be removed
-% CSIndex is a fucntion to find the simialrity of source's (i.e., motor
-% unit) spike trains. It works based on the overlapping histograms.
+% CSIndex is a function to find the similarity of source's (i.e., motor
+% unit) spike trains. It works based on overlapping histograms.
 max_timeDiff = 0.01; % in seconds (as the time_stamp is in seconds) 
 num_bins = 10; % number of bins for the histogram
 duplicate_sources = [];
@@ -76,6 +75,3 @@ end
 good_idx = setdiff(plausible_firings,duplicate_sources);
 spike_train = sparse(spike_train(:,good_idx));
 source = source(:,good_idx);
-
-
-

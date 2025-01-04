@@ -1,17 +1,17 @@
 function plot_spikeTrain(spike_train,frq,sil_score,minScore_toPlot)
 %PLOT_SPIKETRAIN plots the spike trains in a sorted manner
 %   The physiology of the motor unit activations suggests that the motor
-%   units with more spikes should have been activated eariler than the motr
+%   units with more spikes should have been activated earlier than the motor
 %   units with fewer spikes. This fact, however, should be verified by
-%   finding the thresholds of each motor units.
+%   finding the thresholds of each motor unit.
 %   PLOT_SPIKETRAIN plots the spike trains above the min silhouette
 %   threshold over time in a vertically sorted manner.
 %
 %   INPUTS:
-%   'spike_train': The arrya ofo tehs pikes, it is a FRAME x MOTOR UNIT
+%   'spike_train': The array of the spikes, it is a FRAME x MOTOR UNIT
 %   matrix.
 %
-%   'frq': The singal frequency.
+%   'frq': The signal frequency.
 %
 %   'sil_score': The silhouette score for each motor unit.
 %
@@ -24,7 +24,7 @@ function plot_spikeTrain(spike_train,frq,sil_score,minScore_toPlot)
 %
 %   Copyright (c) 2022 Seyed Yahya Shirazi, shirazi@ieee.org
 %% initialize
-if ~exist("minScore_toPlot","var") || isempty(minScore_toPlot), minScore_toPlot = 0.7; end % default value for the recoding frequency 
+if ~exist("minScore_toPlot","var") || isempty(minScore_toPlot), minScore_toPlot = 0.7; end % Default value for the recording frequency 
 selected_spikeTrain = spike_train(:,sil_score>minScore_toPlot);
 [~,order] = sort(sum(selected_spikeTrain,1),"descend");
 bar_height = 0.2;
@@ -33,7 +33,7 @@ sub_handle = subplot(1,1,1);
 ylim(sub_handle,[0,10])
 hold on
 %% plot as a rug plot
-% plotting will be very simialr to the rug plots I used to have
+% Plotting will be very similar to the rug plots I used to have
 % (https://github.com/neuromechanist/add_rug_plot). However, here the rugs
 % are the plot.
 rugVal = num2cell(selected_spikeTrain(:,order)',2);
@@ -60,4 +60,3 @@ xlim(sub_handle,[0,length(selected_spikeTrain)])
 xticks(linspace(0,length(selected_spikeTrain),10));
 xticklabels(round(linspace(0,length(selected_spikeTrain)/frq,10)));
 xlabel("time (sec)")
-

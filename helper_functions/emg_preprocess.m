@@ -8,14 +8,14 @@ function [preprocessed_data,W] = emg_preprocess(data,varargin)
 %   'whiten_flag' : Whether to whiten the data prior to the ICA. Default =
 %   1
 %
-%   'SNR': Adding white noise to the EMG mixutre. Uses Communication Toolbox
-%    AWGN fucntion. Default = Inf for not injecting any artificial noise.
+%   'SNR': Adding white noise to the EMG mixture. Uses Communication Toolbox
+%    AWGN function. Default = Inf for not injecting any artificial noise.
 %
 %   'R': The number of times to repeat the data blocks, see the Hyser paper
 %    for more detail. Default = 4
 %
-%   'array_shape': The first element will be used to calcualte the bipolar
-%   activitiy if the bipolar flag is on for the 'data_mode'.
+%   'array_shape': The first element will be used to calculate the bipolar
+%   activity if the bipolar flag is on for the 'data_mode'.
 %
 %   REV:
 %   v0 @ 09/12/2022
@@ -43,15 +43,15 @@ for i = 1:2:length(varargin)
         case 'array_shape'
             array_shape = varargin{i+1};
             if length(array_shape) ~= 2
-                error("array_shape should be strictirly a 1 x 2 vector")
+                error("array_shape should be strictly a 1 x 2 vector")
             elseif mod(array_shape(1) * array_shape(2), 2) == 1
                 error("array_shape elements should be even numbers. Please choose another array shape"+...
                     "\n if [13, 5] is used, please rerun the script with [8, 8].")
             end
     end
 end
-% data can come in coloumn or row format, but needs to become the coloumn
-% format where the 
+% Data can come in column or row format, but needs to be in column
+% format for processing.
 num_chan = min(size(data));  % Let's assume that we have more than 64 frames
 if num_chan ~= size(data,2), data = data'; end
 
@@ -67,15 +67,15 @@ if string(data_mode) == "bipolar"
 end
 
 extended_data = zeros(size(data,1),size(data,2)*(R+1));
-extended_data(:,1:size(data,2)) = data; % to make a consistent downstream
+extended_data(:,1:size(data,2)) = data; % Initialize first block for consistent downstream processing
 if R~=0
     for i = 1:R
-        % This basically shift the data on the replications one step
-        % forward. This is pretty standard in the ICA, as ICA should be
-        % able to parse the sources out pretty well. Also, it introduces
-        % small delay, R/freq, which with R=64, delay = 64/2048= 31ms.
+        % This shifts the data on the replications one step
+        % forward. This is standard practice in ICA, as ICA should be
+        % able to parse the sources out effectively. It introduces a
+        % small delay of R/freq (e.g., with R=64, delay = 64/2048 = 31ms).
         % This addition reinforces finding MUAPs, despite having
-        % duplicates. Later on, the duplicates will be removed.
+        % duplicates which will be removed later.
         extended_data(1+i:end,size(data,2)*i+1:size(data,2)*i+size(data,2)) = ...
             data(1:end-i,:);
     end

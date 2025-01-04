@@ -1,7 +1,7 @@
 function [Xwh, mu, invMat, whMat] = whiten(X,epsilon)
-%function [X,mu,invMat] = whiten(X,epsilon)
-%
-% ZCA whitening of a data matrix (make the covariance matrix an identity matrix)
+%WHITEN Perform ZCA whitening of a data matrix.
+%   [Xwh, mu, invMat, whMat] = WHITEN(X, epsilon) transforms the data matrix X
+%   to make its covariance matrix an identity matrix.
 %
 % WARNING
 % This form of whitening performs poorly if the number of dimensions are
@@ -15,13 +15,13 @@ function [Xwh, mu, invMat, whMat] = whiten(X,epsilon)
 %
 % OUTPUT
 % Xwh: whitened data, rows are instances, columns are features
-% mu: mean of each feature of the orginal data
+% mu: mean of each feature of the original data
 % invMat: the inverse data whitening matrix
 % whMat: the whitening matrix
 %
 % EXAMPLE
 %
-% X = rand(100,20); % 100 instance with 20 features
+% X = rand(100,20); % 100 instances with 20 features
 % 
 % figure;
 % imagesc(cov(X)); colorbar; title('original covariance matrix');
@@ -77,4 +77,3 @@ A = X'*X;
 whMat = sqrt(size(X,1)-1)*V*sqrtm(inv(D + eye(size(D))*epsilon))*V';
 Xwh = X*whMat;  
 invMat = pinv(whMat);
-

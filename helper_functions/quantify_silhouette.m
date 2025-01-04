@@ -1,14 +1,14 @@
 function score = quantify_silhouette(source, freq)
-%quantify_silhouette() Runs (fast) ICA on the hdEMG data and produces the spike trains.
+%QUANTIFY_SILHOUETTE Calculate silhouette scores for motor unit clusters.
+%   Similar to silhouette scoring for k-means clustering problems,
+%   this function evaluates the quality of clustering performed by the
+%   run_ICA() method.
 %
-%
-%   Similar to the silhouette scoring for all kmeans clustering problems,
-%   the aim is to understand how good the clustering was performed in the
-%   runICA() method
 %   INPUT:
-%   'source' : The source signa, T x N, where T is the frames.
+%   'source' : The source signal, T x N matrix, where T is the number of frames
+%             and N is the number of sources.
 %
-%   'freq' : signal frequency.
+%   'freq'   : Sampling frequency in Hz.
 %
 %   OUTPUT:
 %   'score': The Silhouette score for the source.
@@ -19,5 +19,4 @@ function score = quantify_silhouette(source, freq)
 %   Copyright (c) 2022 Seyed Yahya Shirazi, shirazi@ieee.org
 %% initialize
 [b,a] = butter(4,500/(freq/2),'low'); % low-pass filter for the source signals
-score = zeros(1,size(source,2)); % motor units are at the columns, frames are at the rows.
-
+score = zeros(1,size(source,2)); % Initialize scores (columns = motor units, rows = frames)
